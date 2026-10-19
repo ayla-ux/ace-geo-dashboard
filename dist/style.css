@@ -1,0 +1,133 @@
+
+:root{--bg:#f5f6f8;--ink:#202735;--muted:#7b8494;--accent:#6b56e8;--line:#e8eaf0}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px 'DM Sans',Arial,'Microsoft YaHei',sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:7px;padding:9px 13px;background:white;color:var(--ink)}button:hover{border-color:var(--accent)}button.primary{background:var(--accent);color:white;border-color:var(--accent)}aside{width:226px;position:fixed;inset:0 auto 0 0;background:#fff;border-right:1px solid var(--line);padding:35px 22px}.logo{font-size:32px;font-weight:700;color:#20212d;letter-spacing:-2px;text-decoration:none}.logo span{font-size:12px;letter-spacing:2px;margin-left:7px}.workspace{font-size:10px;letter-spacing:1.5px;margin:32px 0;color:var(--muted)}.workspace span{display:block;letter-spacing:0;margin-top:8px}nav button{display:block;width:100%;text-align:left;margin:7px 0;border:0;padding:13px 12px;color:#6d7483}nav .active{background:#eeebff;color:var(--accent);font-weight:600}.aside-bottom{position:absolute;bottom:30px;color:#6c7483;font-size:12px;line-height:2}.aside-bottom small{color:#a0a6b1}.dot{display:inline-block;width:6px;height:6px;background:#52aa8c;border-radius:50%;margin-right:5px}main{margin-left:226px;padding:0 38px}header{height:80px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px}header div{display:flex;gap:10px;align-items:center}#mode{padding:6px 9px;background:#fff1dc;color:#946a29;border-radius:5px}.intro{display:flex;justify-content:space-between;align-items:center;padding:34px 0 25px}.eyebrow{font-size:10px;color:var(--accent);letter-spacing:1.7px}h1{font-size:29px;letter-spacing:-.8px;margin:12px 0}p{line-height:1.8;color:var(--muted)}.intro p{margin:0}.stamp{font-size:35px;font-weight:700;color:#d3d0e6;text-align:right;line-height:1}.stamp span{font-size:9px;letter-spacing:2px}.notice{background:#efecff;border:1px solid #e2dcff;padding:12px 16px;border-radius:8px;color:#706395;font-size:12px;display:flex;justify-content:space-between;align-items:center}.notice button{background:transparent;border:0;color:var(--accent);padding:0}.filters{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:22px 0;color:#70798b;font-size:12px}.filters label{display:flex;align-items:center;gap:8px}input,select,textarea{padding:9px;border:1px solid #e0e3eb;border-radius:6px;background:white;color:var(--ink)}select{max-width:175px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.card,.panel{background:white;border:1px solid var(--line);border-radius:10px;padding:21px}.card label{color:#788293;font-size:12px}.value{font-size:32px;font-weight:600;letter-spacing:-1px;margin:15px 0 7px}.hint{font-size:11px;color:#98a0ae}.card:first-child{border-top:3px solid var(--accent)}.grid{display:grid;grid-template-columns:1.55fr 1fr;gap:18px;margin-top:20px}.panel h2{font-size:15px;margin:0 0 5px}.panel .sub{font-size:11px;color:#9aa1af;margin-bottom:20px}.panel.wide{margin-top:20px}.legend{display:flex;gap:14px;font-size:11px;color:#8490a1;margin:10px 0}.legend i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-right:5px}svg{width:100%;height:205px}table{border-collapse:collapse;width:100%;font-size:12px}th{text-align:left;color:#939baa;font-weight:400;border-bottom:1px solid var(--line);padding:12px 9px}td{padding:14px 9px;border-bottom:1px solid #f0f1f5}tr:last-child td{border-bottom:0}.bar{height:6px;background:#f0edf9;width:100%;border-radius:4px;margin-top:7px}.bar div{height:100%;background:#8a78ed;border-radius:4px}.badge{display:inline-block;padding:4px 7px;border-radius:4px;background:#f0edf9;color:#7867b4;font-size:10px}.good{background:#e9f6ef;color:#408762}.row{display:flex;justify-content:space-between;align-items:center;gap:12px}.muted{color:var(--muted)}.empty{text-align:center;padding:60px 20px;color:var(--muted)}.form{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}.form textarea{flex:1;min-width:220px}.form input{width:130px}.answer{white-space:pre-wrap;line-height:1.8;background:#f7f8fa;padding:20px;border-radius:7px}dialog{max-width:820px;width:90%;border:1px solid var(--line);border-radius:12px;padding:25px;max-height:85vh}dialog::backdrop{background:#20273577}#close{float:right}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f6f8;padding:16px;font-size:12px}footer{padding:28px 0;font-size:10px;color:#a2a9b5;display:flex;justify-content:space-between}a{color:var(--accent)}.guide{max-width:950px}.guide li{line-height:2;color:#737d8d}.guide h3{font-size:15px;margin-top:28px}@media(max-width:1100px){main{padding:0 22px}.cards{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:1fr}aside{width:190px}main{margin-left:190px}}@media(max-width:700px){aside{position:static;width:100%;padding:14px}.workspace,.aside-bottom{display:none}nav{display:flex;overflow:auto}nav button{width:auto;white-space:nowrap;font-size:11px}.logo{font-size:24px}main{margin:0;padding:0 15px}header{height:auto;padding:15px 0;gap:10px;flex-wrap:wrap}.stamp{display:none}h1{font-size:24px}.notice{gap:10px;line-height:1.8}.cards{gap:8px}.card{padding:15px}.value{font-size:26px}.panel{overflow:auto;padding:15px}table{min-width:500px}}
+.nav-label{font-size:10px;color:#9aa1af;letter-spacing:1px;margin:20px 12px 7px}.monitor-cards{grid-template-columns:repeat(3,1fr)}.citation-tabs{display:flex;gap:10px;margin:18px 0}.metric-scroll{overflow:auto}.performance-table{min-width:1850px}.performance-table th{text-align:center;background:#f5f3ff}.performance-table th:first-child,.performance-table td:first-child{position:sticky;left:0;background:white;min-width:340px;max-width:340px;z-index:1;text-align:left}.performance-table th:first-child{background:#f5f3ff;z-index:2}.performance-table td{vertical-align:top;min-width:110px}.metric-breakdown{max-height:190px;overflow:auto;min-width:160px;max-width:250px;overflow-wrap:anywhere;line-height:1.8}@media(max-width:700px){.monitor-cards{grid-template-columns:1fr}.nav-label{display:none}}
+
+/* Visual refinement: preserve geometry, navigation and metric definitions. */
+:root{--bg:#f4f5f7;--ink:#202632;--muted:#657080;--accent:#435ab8;--line:#e1e5eb}
+body{font-family:Inter,"Segoe UI Variable","Segoe UI","PingFang SC","Microsoft YaHei UI","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased;line-height:1.55}
+aside{background:#fbfcfd;border-right-color:#e1e5eb}.logo{color:#151d2d}.logo span{font-weight:600;color:#465267}.workspace{color:#6d788a}.workspace span{color:#768193}
+nav button{color:#606c7d;font-weight:500;border-radius:8px;background:transparent;transition:background .15s,color .15s}nav button:hover{background:#f0f3f8;color:#26344c}nav .active{background:#e9edf8;color:#304987;box-shadow:inset 3px 0 #5269bd;font-weight:600}.nav-label{color:#727f91}.aside-bottom{color:#6f7a8a}.dot{background:#468a83}
+header{color:#697587}header b{color:#3b475a;font-weight:600}.eyebrow{color:#667791;letter-spacing:1.8px;font-weight:600}h1{color:#1e293b;font-weight:650;letter-spacing:-.6px}.intro p{color:#6a7586}.stamp{color:#ccd3df}.stamp span{color:#8390a5}
+button{border-color:#dce2eb;border-radius:7px;color:#435066;box-shadow:0 1px 2px #18294305;transition:background .15s,border-color .15s}button:hover{border-color:#a7b4d1;background:#f6f8fc}button.primary{background:#435ab8;border-color:#435ab8;color:white;box-shadow:0 2px 4px #334d991a}button.primary:hover{background:#354da7}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #8397d3;outline-offset:3px}button:disabled{opacity:.55;cursor:default}
+#mode{background:#edf2f8;color:#4c6280;border:1px solid #dee6f0;font-weight:500}.notice{background:#eef2f8;border-color:#dfe6f1;color:#52647f;border-radius:8px}.notice button{color:#435ab8}.filters{color:#5f6e81}input,select,textarea{border-color:#dce2eb;background:#fff;color:#334155;box-shadow:0 1px 2px #18294303}input::placeholder,textarea::placeholder{color:#8691a2}
+.card,.panel{border-color:#e0e5ed;border-radius:11px;box-shadow:0 2px 9px #1c304204}.card:first-child{border-top-color:#5269bd}.card label{color:#5d6b80;font-weight:500;letter-spacing:.15px}.value{font-family:Inter,"Segoe UI",sans-serif;font-weight:600;font-variant-numeric:tabular-nums;color:#202f47;letter-spacing:-1px}.hint,.panel .sub{color:#6c798d;line-height:1.7}.panel h2{color:#26354b;font-weight:600;letter-spacing:.1px}
+th{color:#67758a;font-weight:500;border-bottom-color:#dfe5ed;background:#fafbfd}td{border-bottom-color:#eef1f5;color:#354359;font-variant-numeric:tabular-nums}tbody tr:hover td{background:#f8fafc}.badge{background:#edf1f8;color:#526887;font-weight:500}.good{background:#eaf3ef;color:#377364}.bar{background:#edf0f6}.bar div{background:#6579be}.legend{color:#5d6e85}.muted{color:#6c798b}.empty{color:#7a8799}
+.performance-table th,.performance-table th:first-child{background:#eef2f8;color:#4c6080}.performance-table td:first-child{background:#fff}.performance-table td:first-child b{font-weight:500;color:#2d3d54}.citation-tabs button.primary{background:#435ab8}.answer,pre{background:#f3f5f8;color:#354359}.guide li{color:#5f6e81}a{color:#435ab8}footer{color:#738095}dialog{border-color:#dfe5ed;box-shadow:0 18px 60px #1c304222}dialog::backdrop{background:#18233766}
+@media(prefers-reduced-motion:reduce){button,nav button{transition:none}}
+
+/* Use installed DengXian rather than falling through to the old Chinese font. */
+body{font-family:"Segoe UI","DengXian","等线",sans-serif;letter-spacing:.15px}
+h1,.panel h2{font-family:"DengXian","等线","Segoe UI",sans-serif;font-weight:700}
+h1{letter-spacing:.3px}.panel h2{font-size:17px;letter-spacing:.4px}
+.value{font-family:"Bahnschrift","Segoe UI",sans-serif;font-weight:500}
+.performance-table{border-collapse:separate;border-spacing:0;table-layout:fixed;width:1850px}
+.performance-table th:first-child{position:static;left:auto;min-width:0;max-width:none;z-index:auto;text-align:center}
+.performance-table thead tr:first-child th:first-child{position:sticky;left:0;width:340px;min-width:340px;max-width:340px;z-index:3;text-align:left}
+.performance-table td:first-child{width:340px;min-width:340px;max-width:340px;border-right:1px solid #e1e5eb;background:#fff}
+.performance-table th,.performance-table td{overflow-wrap:anywhere;line-height:1.7}
+.performance-table th{height:auto;white-space:normal;padding-top:15px;padding-bottom:15px}
+.performance-table thead tr:nth-child(2) th:first-child{position:static;background:#eef2f8;text-align:center}
+
+.compact-performance{width:1350px;min-width:1350px}.compact-performance th:nth-child(2){width:130px}.compact-performance th:nth-child(3){width:90px}.compact-performance th:nth-child(4){width:120px}.compact-performance th:nth-child(5){width:180px}.compact-performance th:nth-child(6){width:150px}.compact-performance th:nth-child(7){width:200px}
+
+/* Stronger text weight without changing font size or layout. */
+body{font-weight:500}
+button,input,select,textarea{font-weight:600}
+nav button{font-weight:600}nav .active{font-weight:700}
+th{font-weight:700}td{font-weight:600}
+.panel h2,h1{font-weight:700}
+.performance-table td:first-child b{font-weight:700}
+.card label,.hint,.panel .sub,.muted,.intro p,.notice,.filters,.legend{font-weight:600}
+.value{font-weight:600}
+
+/* Chinese gets a stronger face; Latin keeps its existing weight. */
+@font-face{font-family:"GEO Chinese";src:local("PingFang SC Semibold"),local("DengXian Bold"),local("等线 Bold");font-weight:400 900;unicode-range:U+2E80-9FFF,U+F900-FAFF,U+3000-303F,U+FF00-FFEF}
+body{font-family:"GEO Chinese","Segoe UI","PingFang SC","DengXian","等线",sans-serif}
+h1,.panel h2{font-family:"GEO Chinese","Segoe UI","PingFang SC","DengXian","等线",sans-serif}
+
+.visibility-grid{align-items:start}.source-url{display:inline-block;max-width:680px;overflow-wrap:anywhere;word-break:break-word}.visibility-grid table{font-size:12px}
+
+.visibility-grid{align-items:stretch}
+.visibility-grid .trend-panel{display:flex;flex-direction:column;min-height:360px}
+.trend-panel svg{flex:1;width:100%;height:auto;min-height:260px}
+.trend-panel .legend{margin-top:auto;padding-top:12px}
+.trend-panel .empty{flex:1;display:grid;place-items:center}
+
+.trend-plot{position:relative;flex:1;min-height:260px;margin-top:12px}
+.trend-panel .trend-plot svg{position:absolute;inset:0;width:100%;height:100%;min-height:0;display:block}
+.trend-panel .legend{flex-shrink:0;margin-bottom:0}
+
+/* Prompt library actions stay on one horizontal line. */
+#content table:has([data-edit]) td:last-child{white-space:nowrap;min-width:158px;vertical-align:middle}
+#content table:has([data-edit]) td:last-child button{display:inline-flex;align-items:center;justify-content:center;min-width:62px;white-space:nowrap;margin:0}
+#content table:has([data-edit]) td:last-child button+button{margin-left:8px}
+#content table:has([data-edit]) td:nth-last-child(2){white-space:nowrap;min-width:62px;vertical-align:middle}
+#content table:has([data-edit]) .badge{white-space:nowrap;word-break:keep-all}
+#content .panel:has([data-edit]){overflow-x:auto}
+
+[hidden]{display:none!important}.team-entry{font-size:12px;font-weight:600;white-space:nowrap;text-decoration:none;padding:8px 10px}
+
+/* User-selected NanoTikBazHei Chinese webfont */
+
+body,h1,.panel h2{font-family:"ACE Nano Chinese","Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+button,input,select,textarea{font-family:inherit}
+
+/* Matching top accents for visibility and citation metric cards. */
+.monitor-cards > .card{border-top:3px solid #5269bd}
+
+/* Evidence-backed insight layouts. */
+.insight-cards{grid-template-columns:repeat(3,minmax(0,1fr))}.platform-comparison{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}.platform-comparison .panel{min-width:0}.insight-answer{white-space:pre-wrap;overflow-wrap:anywhere;max-height:420px;overflow:auto;line-height:1.85;font-size:13px;padding:14px;background:#f7f9fc;border-radius:8px}.evidence-meta{font-size:11px;color:#738095;overflow-wrap:anywhere;line-height:1.8}.comparison-select{max-width:100%;width:100%;margin-top:10px}.comparison-question{color:#26354b;padding:16px;border-left:3px solid #5269bd;background:#f4f6fb}.evidence-link{font-size:12px;white-space:nowrap}.evidence-note{border-top:1px solid #e8edf4;padding-top:16px}aside nav{max-height:calc(100vh - 250px);overflow:auto}.metric-scroll td{vertical-align:top}.platform-comparison h2{margin-bottom:12px}@media(max-width:1000px){.platform-comparison{grid-template-columns:1fr}}@media(max-width:700px){.insight-cards{grid-template-columns:1fr}aside nav{max-height:none}}
+
+/* Sidebar footer participates in layout; menu alone scrolls. */
+@media(min-width:701px){aside{display:flex;flex-direction:column;height:100vh;overflow:hidden}.logo,.workspace,.aside-bottom{flex-shrink:0}aside nav{flex:1;min-height:0;max-height:none;overflow-y:auto;padding-bottom:12px}.aside-bottom{position:static;margin-top:16px;padding-top:12px;border-top:1px solid #e8eaf0}}
+
+/* Consistent scenario columns and vertical alignment. */
+.scenario-table{overflow-x:auto}.scenario-table table{table-layout:fixed;min-width:1080px;width:100%}.scenario-table th,.scenario-table td{vertical-align:middle;text-align:center;padding:16px 12px;line-height:1.6;font-variant-numeric:tabular-nums}.scenario-table th{white-space:normal;height:64px}.scenario-table td{height:78px}.scenario-table th:first-child,.scenario-table td:first-child{text-align:left;width:17%;overflow-wrap:anywhere}.scenario-table th:nth-child(2){width:13%}.scenario-table th:nth-child(3){width:18%}.scenario-table th:nth-child(4),.scenario-table th:nth-child(5),.scenario-table th:nth-child(6){width:9%}.scenario-table th:nth-child(7){width:11%}.scenario-table th:last-child{width:14%}.scenario-table button{display:inline-flex;align-items:center;justify-content:center;width:130px;min-height:42px;padding:8px;white-space:nowrap}.scenario-table td.empty{text-align:center}
+
+/* Breathing room when a page has no filter toolbar. */
+.filters[hidden] + #content{margin-top:26px}
+
+/* Paired date windows, explicit comparisons and consistent table alignment. */
+.date-comparison{display:flex;flex-wrap:wrap;align-items:center;gap:14px;width:100%;padding-bottom:16px;border-bottom:1px solid #dfe5ed}.date-range{display:flex;align-items:center;flex-wrap:wrap;gap:9px;padding:10px 12px;background:#fff;border:1px solid #e1e5eb;border-radius:8px}.date-range input{width:145px;min-width:0}.versus{color:#5269bd}.metric-delta{display:inline-flex;vertical-align:middle;flex-direction:column;gap:3px;font:600 14px "Segoe UI",sans-serif;letter-spacing:0;margin-left:14px;color:#718095}.metric-delta span{font-size:11px;font-weight:400}.metric-delta.increase{color:#168252}.metric-delta.decrease{color:#cb4545}.trend-tooltip{position:absolute;z-index:5;pointer-events:none;background:#24344b;color:white;padding:10px 13px;border-radius:7px;font-size:12px;box-shadow:0 4px 14px #172a4226;max-width:100%}
+#content table th,#content table td{vertical-align:middle;text-align:center;padding:16px 12px;line-height:1.6;font-variant-numeric:tabular-nums}
+#content table th:first-child,#content table td:first-child{text-align:left}
+#content table td.empty{text-align:center}
+#content table th{white-space:normal}
+#content table td button{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+#content .panel:has(>table){overflow-x:auto}
+#content table:not(.performance-table){min-width:520px}
+#content .performance-table th:first-child,#content .performance-table td:first-child{text-align:left;vertical-align:middle}
+
+
+/* Keep every custom dialog close control outside its scrolling content. */
+dialog#detail,dialog#manualEntry{padding:0;overflow:hidden;max-height:85vh;max-height:85dvh}
+dialog#detail[open],dialog#manualEntry[open]{display:flex;flex-direction:column}
+.dialog-toolbar{display:flex;justify-content:flex-end;align-items:center;gap:16px;flex:0 0 auto;padding:12px 20px;border-bottom:1px solid #e1e5eb;background:#fff;z-index:2}
+.dialog-toolbar h2{margin:0;flex:1;font-size:17px}
+.dialog-toolbar button,#close{float:none;flex-shrink:0;min-height:40px;background:#fff}
+.dialog-scroll{flex:1 1 auto;min-height:0;overflow:auto;overscroll-behavior:contain;padding:20px 25px;scrollbar-gutter:stable}
+@media(max-width:700px){.dialog-toolbar{padding:10px 14px}.dialog-scroll{padding:16px}}
+
+/* Jiangcheng-based OFL web subsets; renamed ACE Jiangcheng Sans. Licenses: assets/fonts/jiangcheng/. */
+@font-face{font-family:"ACE Jiangcheng Sans";font-style:normal;font-weight:100 500;font-display:swap;src:url("assets/webfonts/font-1.woff2") format("woff2");unicode-range:U+2000-206F,U+3000-9FFF,U+F900-FAFF,U+FF00-FFEF;}
+@font-face{font-family:"ACE Jiangcheng Sans";font-style:normal;font-weight:600 900;font-display:swap;src:url("assets/webfonts/font-2.woff2") format("woff2");unicode-range:U+2000-206F,U+3000-9FFF,U+F900-FAFF,U+FF00-FFEF;}
+body,h1,.panel h2{font-family:"ACE Jiangcheng Sans","Segoe UI","Microsoft YaHei",sans-serif}body{font-weight:500}h1,h2,h3,th,button,nav button{font-weight:700}button,input,select,textarea{font-family:inherit}
+
+/* Reserve space for citation counts and shares beside long page URLs. */
+#content .citation-table table{width:100%;min-width:620px;table-layout:fixed}
+#content .citation-table th:nth-child(2),#content .citation-table td:nth-child(2){width:112px;white-space:nowrap}
+#content .citation-table th:nth-child(3),#content .citation-table td:nth-child(3){width:168px;white-space:nowrap}
+#content .citation-table td:first-child{overflow-wrap:anywhere;word-break:break-word}
+#content .citation-table .source-url{max-width:100%;overflow-wrap:anywhere}
+
+#content .gap-table table{table-layout:fixed;min-width:1160px;width:100%}
+#content .gap-table th:first-child{width:29%}
+#content .gap-table th:nth-child(2){width:15%}
+#content .gap-table th:nth-child(3){width:13%}
+#content .gap-table th:nth-child(4){width:23%}
+#content .gap-table th:nth-child(5){width:10%}
+#content .gap-table th:nth-child(6){width:10%}
+#content .gap-table td{overflow-wrap:anywhere}
+.gap-source-links{text-align:left;line-height:1.6}.gap-source-links a{display:block;margin:0 0 12px;overflow-wrap:anywhere}.gap-source-links small{display:block;font-size:11px;color:var(--muted)}.gap-source-links summary{cursor:pointer;color:#5267ba}
+
+.prompt-status-toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0}.prompt-status-toolbar label{font-weight:700}.prompt-status-toolbar select{min-width:140px}

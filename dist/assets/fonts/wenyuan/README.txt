@@ -1,0 +1,1 @@
+Web subsets derived from user-provided WenYuanSerifSC Medium/Bold. Renamed ACE Reading Serif for modified fonts. Original licenses and source TTFs retained here. Chinese coverage U+3000-9FFF and punctuation; Latin UI and numeric fonts retained. Licensed under SIL OFL 1.1.
