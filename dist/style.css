@@ -111,7 +111,7 @@ dialog#detail[open],dialog#manualEntry[open]{display:flex;flex-direction:column}
 /* Jiangcheng-based OFL web subsets; renamed ACE Jiangcheng Sans. Licenses: assets/fonts/jiangcheng/. */
 @font-face{font-family:"ACE Jiangcheng Sans";font-style:normal;font-weight:100 500;font-display:swap;src:url("assets/webfonts/font-1.woff2") format("woff2");unicode-range:U+2000-206F,U+3000-9FFF,U+F900-FAFF,U+FF00-FFEF;}
 @font-face{font-family:"ACE Jiangcheng Sans";font-style:normal;font-weight:600 900;font-display:swap;src:url("assets/webfonts/font-2.woff2") format("woff2");unicode-range:U+2000-206F,U+3000-9FFF,U+F900-FAFF,U+FF00-FFEF;}
-body,h1,.panel h2{font-family:"ACE Jiangcheng Sans","Segoe UI","Microsoft YaHei",sans-serif}body{font-weight:500}h1,h2,h3,th,button,nav button{font-weight:700}button,input,select,textarea{font-family:inherit}
+html.fonts-ready body,html.fonts-ready h1,html.fonts-ready .panel h2{font-family:"ACE Jiangcheng Sans","Segoe UI","Microsoft YaHei",sans-serif}body{font-weight:500}h1,h2,h3,th,button,nav button{font-weight:700}button,input,select,textarea{font-family:inherit}
 
 /* Reserve space for citation counts and shares beside long page URLs. */
 #content .citation-table table{width:100%;min-width:620px;table-layout:fixed}
@@ -131,3 +131,9 @@ body,h1,.panel h2{font-family:"ACE Jiangcheng Sans","Segoe UI","Microsoft YaHei"
 .gap-source-links{text-align:left;line-height:1.6}.gap-source-links a{display:block;margin:0 0 12px;overflow-wrap:anywhere}.gap-source-links small{display:block;font-size:11px;color:var(--muted)}.gap-source-links summary{cursor:pointer;color:#5267ba}
 
 .prompt-status-toolbar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin:18px 0}.prompt-status-toolbar label{font-weight:700}.prompt-status-toolbar select{min-width:140px}
+
+/* Do not show zero metrics before the first successful database response. */
+html:not([data-load-state="ready"]) #content,html:not([data-load-state="ready"]) .filters{display:none}
+html:not([data-load-state="ready"]) nav button,html:not([data-load-state="ready"]) header button{pointer-events:none;opacity:.55}
+html[data-load-state="ready"] #cloudLoading{display:none}
+#cloudLoading{margin-top:24px}
