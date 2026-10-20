@@ -10,6 +10,7 @@ import backend
 import editor
 
 WEBHOOK = 'https://maxine-acestudio.app.n8n.cloud/webhook/ace-geo-dashboard'
+MAX_BATCH_TASKS = 540  # 180 prompts × three platforms × one repeat.
 
 class NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -41,8 +42,8 @@ def payload_for(body, prompts):
         raise ValueError('请选择题目')
     if not isinstance(platforms, list) or not platforms or any(p not in ('ChatGPT', 'Perplexity', 'Gemini') for p in platforms) or len(set(platforms)) != len(platforms):
         raise ValueError('请选择有效平台')
-    if type(repeats) is not int or not 1 <= repeats <= 3 or len(ids)*len(platforms)*repeats > 300:
-        raise ValueError('单批最多300次，重复轮次为1至3')
+    if type(repeats) is not int or not 1 <= repeats <= 3 or len(ids)*len(platforms)*repeats > MAX_BATCH_TASKS:
+        raise ValueError(f'单批最多{MAX_BATCH_TASKS}次，重复轮次为1至3')
     selected = [p for p in prompts if p['id'] in ids]
     types = {p.get('test_type') for p in selected}
     if len(selected) != len(ids) or any(not p.get('active') for p in selected) or len(types) != 1:
@@ -64,7 +65,7 @@ class Handler(editor.Handler):
             prompts = self.server.store.db.rows('geo_prompts', baseline_id='eq.english-v2', order='id.asc')
             payload = payload_for(body, prompts)
         except (ValueError, TypeError, KeyError, AttributeError):
-            return self.send_json({'error': '请选择同一题型的已保存启用题目、有效平台和1至3轮；单批最多300次'}, 400)
+            return self.send_json({'error': f'请选择同一题型的已保存启用题目、有效平台和1至3轮；单批最多{MAX_BATCH_TASKS}次'}, 400)
         except backend.CloudError:
             return self.send_json({'error': '题库读取失败，未发送测试请求'}, 503)
         with self.server.dispatch_lock:
