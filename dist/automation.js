@@ -45,6 +45,7 @@
 
   const MAX_BATCH_TASKS=540; // 180 prompts × three platforms × one repeat.
   let submittingRun=false;let runNotice='';let uncertainRun=false;let schedule=null;let savingPrompts=false;let promptSaveNotice='';
+  let autoLibrary='';
   let source='coze',runs=[],chosenPlatforms=new Set(['Perplexity']),chosenPrompts=new Set(),repeats=1,loading=false,saveState='数据库已连接';
   async function api(path,body){if(body===undefined)return readResponse(apiRoot+path);if(body!==undefined&&config.can_edit===false)throw Error('请先从团队入口登录');let res=await fetch(apiRoot+path,{method:body===undefined?'GET':'POST',headers:body===undefined?{}:{'Content-Type':'application/json','X-GEO-Token':config.csrf_token},body:body===undefined?undefined:JSON.stringify(body)});let data=await res.json();if(!res.ok)throw Error(data.error||'请求失败');return data}
   const baseRender=render;
@@ -63,7 +64,7 @@
   }
   render=function(){
     const hideFilters=['guide','compare','gaps','automation'].includes(view);
-    $('.filters').hidden=hideFilters;
+    $('.filters').hidden=hideFilters;if(hideFilters)ACEPromptLibrary.resetDetails();
     if(hideFilters)['topic','platform','language','market','surface'].forEach(id=>$('#'+id).value='');
     demo=false;
     if(view!=='automation'){
@@ -73,18 +74,19 @@
     }
     const listScrollTop=$('#promptSelectionList')?.scrollTop||0;
     $('#breadcrumb').textContent='自动测试';$('#title').textContent='从问题到指标，自动跑完。';$('#subtitle').textContent='数据库题库 → Coze 工作流 → 平台调用 → 结构化处理 → Supabase → 看板自动刷新';
-    let enabled=prompts.filter(p=>p.active),total=chosenPrompts.size*chosenPlatforms.size*repeats;
+    let enabled=prompts.filter(p=>p.active&&!ACEPromptLibrary.archived(p)),shown=enabled.filter(p=>!autoLibrary||ACEPromptLibrary.group(p)===autoLibrary),total=chosenPrompts.size*chosenPlatforms.size*repeats;
     let busy=submittingRun||uncertainRun;
-    $('#content').innerHTML=`<div class="panel"><h2>定期自动测试 · 每 7 天 · 北京时间 09:00</h2><p id="dailyScheduleStatus"></p><p class="hint">每隔 7 天将启用的自然发现题目在三个平台各测一次；新增题目可在下方手动测试。定时计划由 n8n Cloud 管理，电脑无需保持开机。本页面尚未验证计划的启用状态和下次触发时间。</p></div><div class="panel wide"><div class="row"><h2>自动化链路</h2><span class="badge good">Supabase · 持久化存储</span></div><p>Prompt 测试库 → 自动任务队列 → Coze 国际版 → AI 平台 → Coze 结构化代码 → 数据库 → 指标 → Dashboard</p><div class="form"><label>执行模式 <select id="runMode"><option value="coze">Coze 真实测试</option></select></label><label>重复轮次 <select id="repeatCount"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>${['ChatGPT','Perplexity','Gemini'].map(p=>`<label><input type="checkbox" data-run-platform="${p}" ${chosenPlatforms.has(p)?'checked':''}>${p}</label>`).join('')}</div><p>${config.coze_configured?'选择已保存的题目和平台，提交到 n8n 云端执行；每批请选择同一种题型。':'Coze 尚未配置。缺少：'+esc(config.missing.join('、'))+'。通过启动Coze工作流看板.cmd安全输入令牌；平台密钥在 Coze 中配置。'}</p><div class="row"><h2>选择启用 Prompt · ${enabled.length} 条</h2><div><button id="chooseThree">选前3条英文题</button> <button id="chooseAll">全选自然发现题</button> <button id="chooseNone">清空</button></div></div><div id="promptSelectionList" style="max-height:290px;overflow:auto;margin:12px 0">${enabled.map(p=>`<label style="display:flex;gap:10px;padding:10px;border-bottom:1px solid #eee"><input type="checkbox" data-run-prompt="${esc(p.id)}" ${chosenPrompts.has(p.id)?'checked':''}><span><b>${esc(p.id)}</b> · English · ${esc(p.topic)}<br>${esc(p.text)}</span></label>`).join('')}</div><div class="row"><p id="taskCount">已选 ${chosenPrompts.size} 条题目 × ${chosenPlatforms.size} 个平台 × ${repeats} 轮＝${total} 个任务；单批最多${MAX_BATCH_TASKS}次。真实模式可能产生平台与 Coze 费用。</p><button class="primary" id="startBatch" ${busy?'disabled':''}>${busy?'批次运行中':'开始自动测试'}</button></div><p class="hint">手动测试与定时测试可能同时运行，请先查看批次历史再提交。提交超时不会自动重试；完成数在批次结束后汇总更新。</p></div><div class="panel wide"><h2>批次历史与进度</h2>${table(['批次 / 时间','模式','状态','完成 / 总数','失败'],runs.map(r=>[`${esc(r.id.slice(0,10))}<br>${esc(new Date(r.created_at).toLocaleString('zh-CN'))}`,r.mode==='simulation'?'自动化模拟':r.mode==='direct'?'Perplexity 直连验证':'Coze 真实测试',statusText[r.status]||esc(r.status),`${r.completed} / ${r.total}`,r.failed]))}</div>`;
+    $('#content').innerHTML=`<div class="panel"><h2>定期自动测试 · 每 7 天 · 北京时间 09:00</h2><p id="dailyScheduleStatus"></p><p class="hint">每隔 7 天将启用的自然发现题目在三个平台各测一次；新增题目可在下方手动测试。定时计划由 n8n Cloud 管理，电脑无需保持开机。本页面尚未验证计划的启用状态和下次触发时间。</p></div><div class="panel wide"><div class="row"><h2>自动化链路</h2><span class="badge good">Supabase · 持久化存储</span></div><p>Prompt 测试库 → 自动任务队列 → Coze 国际版 → AI 平台 → Coze 结构化代码 → 数据库 → 指标 → Dashboard</p><div class="form"><label>执行模式 <select id="runMode"><option value="coze">Coze 真实测试</option></select></label><label>重复轮次 <select id="repeatCount"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select></label>${['ChatGPT','Perplexity','Gemini'].map(p=>`<label><input type="checkbox" data-run-platform="${p}" ${chosenPlatforms.has(p)?'checked':''}>${p}</label>`).join('')}</div><p>${config.coze_configured?'选择已保存的题目和平台，提交到 n8n 云端执行；每批请选择同一种题型。':'Coze 尚未配置。缺少：'+esc(config.missing.join('、'))+'。通过启动Coze工作流看板.cmd安全输入令牌；平台密钥在 Coze 中配置。'}</p><div class="row"><h2>选择启用 Prompt · ${enabled.length} 条</h2><div><button id="chooseThree">选前3条英文题</button> <button id="chooseAll">全选当前组自然发现题</button> <button id="chooseBrand">选择当前组品牌诊断题</button> <button id="chooseNone">清空</button></div></div><div class="library-auto-filter"><label>题库主题 <select id="autoLibrary"><option value="">全部主题</option><option value="core">原有业务（第一份表）</option><option value="song_generation">歌曲生成（第二份表）</option></select></label><span class="hint">当前组 ${shown.length} 条：自然发现 ${shown.filter(p=>p.test_type==='natural_discovery').length} 条，品牌诊断 ${shown.filter(p=>p.test_type==='brand_knowledge').length} 条。不同题型分批测试。</span></div><div id="promptSelectionList" style="max-height:290px;overflow:auto;margin:12px 0">${shown.map(p=>`<label style="display:flex;gap:10px;padding:10px;border-bottom:1px solid #eee"><input type="checkbox" data-run-prompt="${esc(p.id)}" ${chosenPrompts.has(p.id)?'checked':''}><span><b>${esc(p.id)}</b> · English · ${esc(p.topic)}<br>${esc(p.text)}</span></label>`).join('')}</div><div class="row"><p id="taskCount">已选 ${chosenPrompts.size} 条题目 × ${chosenPlatforms.size} 个平台 × ${repeats} 轮＝${total} 个任务；单批最多${MAX_BATCH_TASKS}次。真实模式可能产生平台与 Coze 费用。</p><button class="primary" id="startBatch" ${busy?'disabled':''}>${busy?'批次运行中':'开始自动测试'}</button></div><p class="hint">手动测试与定时测试可能同时运行，请先查看批次历史再提交。提交超时不会自动重试；完成数在批次结束后汇总更新。</p></div><div class="panel wide"><h2>批次历史与进度</h2>${table(['批次 / 时间','模式','状态','完成 / 总数','失败'],runs.map(r=>[`${esc(r.id.slice(0,10))}<br>${esc(new Date(r.created_at).toLocaleString('zh-CN'))}`,r.mode==='simulation'?'自动化模拟':r.mode==='direct'?'Perplexity 直连验证':'Coze 真实测试',statusText[r.status]||esc(r.status),`${r.completed} / ${r.total}`,r.failed]))}</div>`;
     $('#promptSelectionList').scrollTop=listScrollTop;
+    $('#autoLibrary').value=autoLibrary;$('#autoLibrary').onchange=()=>{autoLibrary=$('#autoLibrary').value;chosenPrompts.clear();render()};
     $('#runMode').value=source;$('#repeatCount').value=String(repeats);
     const updateCount=()=>$('#taskCount').textContent=`已选 ${chosenPrompts.size} 条题目 × ${chosenPlatforms.size} 个平台 × ${repeats} 轮＝${chosenPrompts.size*chosenPlatforms.size*repeats} 个任务；单批最多${MAX_BATCH_TASKS}次。真实模式可能产生平台与 Coze 费用。`;
     $('#repeatCount').onchange=()=>{repeats=Number($('#repeatCount').value);updateCount()};
     $('#runMode').onchange=async()=>{source=$('#runMode').value;await refresh(true)};
     document.querySelectorAll('[data-run-prompt]').forEach(c=>c.onchange=()=>{c.checked?chosenPrompts.add(c.dataset.runPrompt):chosenPrompts.delete(c.dataset.runPrompt);updateCount()});
     document.querySelectorAll('[data-run-platform]').forEach(c=>c.onchange=()=>{c.checked?chosenPlatforms.add(c.dataset.runPlatform):chosenPlatforms.delete(c.dataset.runPlatform);updateCount()});
-    $('#chooseThree').onclick=()=>{chosenPrompts=new Set(enabled.filter(p=>p.language==='en').slice(0,3).map(p=>p.id));render()};
-    $('#chooseAll').onclick=()=>{chosenPrompts=new Set(enabled.filter(p=>p.prompt_type==='unbranded').map(p=>p.id));render()};$('#chooseNone').onclick=()=>{chosenPrompts.clear();render()};
+    $('#chooseThree').onclick=()=>{chosenPrompts=new Set(shown.filter(p=>p.test_type==='natural_discovery').slice(0,3).map(p=>p.id));render()};
+    $('#chooseAll').onclick=()=>{chosenPrompts=new Set(shown.filter(p=>p.prompt_type==='unbranded').map(p=>p.id));render()};$('#chooseBrand').onclick=()=>{chosenPrompts=new Set(shown.filter(p=>p.test_type==='brand_knowledge').map(p=>p.id));render()};$('#chooseNone').onclick=()=>{chosenPrompts.clear();render()};
     $('#startBatch').onclick=async()=>{
       if(submittingRun||uncertainRun||!config.can_run)return;
       let sent=false;
@@ -115,7 +117,7 @@
   persist=function(){
     if(!config.can_edit||savingPrompts)return;
     savingPrompts=true;saveState='正在保存题目到 Supabase…';promptSaveNotice=saveState;overrideNotice();
-    const draft=JSON.parse(JSON.stringify(prompts));
+    const draft=JSON.parse(JSON.stringify(ACEPromptLibrary.current()));
     api('/api/prompts',draft).then(data=>{
       prompts=data.prompts;topics();saveState='题目已保存到 Supabase';promptSaveNotice='✓ 题目已保存到 Supabase · '+new Date().toLocaleTimeString('zh-CN',{timeZone:'Asia/Shanghai'})+'（北京时间）';
     }).catch(e=>{
@@ -129,6 +131,6 @@
     if(loading)return;loading=true;
     try{let [history,daily]=await Promise.all([api('/api/runs'),api('/api/schedule')]);schedule=daily;const historyChanged=JSON.stringify(history.filter(r=>r.mode==='coze'))!==JSON.stringify(runs);if(!force&&!historyChanged){saveState='Supabase 已连接 · 正式批次 · 15秒检查更新';overrideNotice();scheduleNotice();return}let results=await api('/api/results?mode='+source+'&summary=1');const nextResults=ACEBatchPolicy.formalResults(results,history).filter(r=>r.simulation!==true&&r.model!=='DEMO'&&!String(r.id).startsWith('demo-')).map(currentBrandDictionary),nextRuns=history.filter(r=>r.mode==='coze');let changed=JSON.stringify(nextRuns)!==JSON.stringify(runs)||JSON.stringify(nextResults)!==JSON.stringify(real);real=nextResults;runs=nextRuns;loadReady();saveState='Supabase 已连接 · 正式批次 · 15秒检查更新';if(force||changed){topics();if(view!=='prompts'||force)render()}overrideNotice();scheduleNotice()}catch(e){saveState='连接失败：'+e.message;loadFailed(e.message);overrideNotice()}finally{loading=false}
   }
-  try{prompts=await api('/api/prompts');chosenPrompts=new Set(prompts.filter(p=>p.active&&p.language==='en').slice(0,3).map(p=>p.id));await refresh(true);const requested=location.hash.slice(1);view=config.can_edit&&['prompts','automation'].includes(requested)?requested:'overview';render();setInterval(()=>refresh(),15000)}catch(e){loadFailed(e.message)}
+  try{prompts=await api('/api/prompts');chosenPrompts=new Set(prompts.filter(p=>p.active&&p.language==='en').slice(0,3).map(p=>p.id));await refresh(true);const requested=location.hash.slice(1);view=requested==='song-generation'?'song-generation':config.can_edit&&['prompts','automation'].includes(requested)?requested:'overview';render();setInterval(()=>refresh(),15000)}catch(e){loadFailed(e.message)}
 })();
 

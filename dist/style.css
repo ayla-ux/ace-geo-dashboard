@@ -137,3 +137,23 @@ html:not([data-load-state="ready"]) #content,html:not([data-load-state="ready"])
 html:not([data-load-state="ready"]) nav button,html:not([data-load-state="ready"]) header button{pointer-events:none;opacity:.55}
 html[data-load-state="ready"] #cloudLoading{display:none}
 #cloudLoading{margin-top:24px}
+
+
+/* Source groups and supplied prompt metadata. */
+.library-filters { flex-basis:100%; display:flex; flex-wrap:wrap; gap:14px; align-items:center; padding-top:14px; border-top:1px solid #e1e7f0; }
+.library-filters[hidden], .library-filters label[hidden] { display:none; }
+.library-filters select { max-width:320px; }
+.library-filters input { min-width:220px; }
+.library-scope { line-height:1.8; margin:0 0 20px; }
+.prompt-translation { margin:10px 0; font-size:13px; }
+.prompt-translation summary { cursor:pointer; color:#5267ba; }
+.prompt-translation p { margin:8px 0; }
+.library-links, .library-auto-filter { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin:18px 0; }
+.song-performance table { min-width:1300px; table-layout:fixed; }
+.song-performance th:first-child { width:420px; }
+.song-performance td { overflow-wrap:anywhere; vertical-align:top; }
+.song-performance .badge, .performance-table .badge { margin:4px 4px 4px 0; }
+@media(max-width:700px) {
+ .library-filters label { width:100%; flex-wrap:wrap; }
+ .library-filters select, .library-filters input { min-width:0; max-width:100%; }
+}
