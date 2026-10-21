@@ -47,6 +47,21 @@
   let submittingRun=false;let runNotice='';let uncertainRun=false;let schedule=null;let savingPrompts=false;let promptSaveNotice='';
   let autoLibrary='';
   let source='coze',runs=[],chosenPlatforms=new Set(['Perplexity']),chosenPrompts=new Set(),repeats=1,loading=false,saveState='数据库已连接';
+  let refreshTimer=null;
+  const refreshButton=$('#refreshResults');
+  function hasActiveRuns(history=runs){return history.some(r=>r.mode==='coze'&&['queued','running'].includes(r.status))}
+  function connectedState(){return hasActiveRuns()?'Supabase 已连接 · 测试运行中，每15秒更新':'Supabase 已连接 · 暂无运行测试，自动刷新已暂停'}
+  function scheduleRefresh(){
+    clearTimeout(refreshTimer);refreshTimer=null;
+    if(initialLoaded&&!document.hidden&&hasActiveRuns()){
+      refreshTimer=setTimeout(()=>{refreshTimer=null;return refresh()},15000);
+    }
+  }
+  document.addEventListener('visibilitychange',()=>{
+    if(document.hidden)scheduleRefresh();
+    else if(initialLoaded&&hasActiveRuns())refresh();
+  });
+  refreshButton.onclick=()=>refresh(true);
   async function api(path,body){if(body===undefined)return readResponse(apiRoot+path);if(body!==undefined&&config.can_edit===false)throw Error('请先从团队入口登录');let res=await fetch(apiRoot+path,{method:body===undefined?'GET':'POST',headers:body===undefined?{}:{'Content-Type':'application/json','X-GEO-Token':config.csrf_token},body:body===undefined?undefined:JSON.stringify(body)});let data=await res.json();if(!res.ok)throw Error(data.error||'请求失败');return data}
   const baseRender=render;
   $('#import').hidden=true;if($('#manualButton'))$('#manualButton').hidden=true;document.querySelectorAll('header button').forEach(b=>{if(b.textContent.includes('添加首轮'))b.hidden=true});
@@ -128,9 +143,25 @@
 
   function scheduleNotice(){const el=$('#dailyScheduleStatus');if(!el)return;if(schedule?.managed_by==='n8n'){el.textContent=schedule.blocked;return;}el.textContent=schedule?`${schedule.enabled?'已启用':'未启用'} · 每 ${schedule.interval_days||7} 天 ${schedule.prompt_count} 题 / ${schedule.calls} 次调用 · ${schedule.blocked||('下一计划日期：'+schedule.next_date+' 09:00（当天到点未跑则待补跑）')} · 最近自动批次：${schedule.last?(schedule.last.day+' '+(statusText[schedule.last.status]||schedule.last.status)+' '+schedule.last.completed+'/'+schedule.last.total):'尚未执行'}`:'正在读取定期计划…'}
   async function refresh(force=false){
-    if(loading)return;loading=true;
-    try{let [history,daily]=await Promise.all([api('/api/runs'),api('/api/schedule')]);schedule=daily;const historyChanged=JSON.stringify(history.filter(r=>r.mode==='coze'))!==JSON.stringify(runs);if(!force&&!historyChanged){saveState='Supabase 已连接 · 正式批次 · 15秒检查更新';overrideNotice();scheduleNotice();return}let results=await api('/api/results?mode='+source+'&summary=1');const nextResults=ACEBatchPolicy.formalResults(results,history).filter(r=>r.simulation!==true&&r.model!=='DEMO'&&!String(r.id).startsWith('demo-')).map(currentBrandDictionary),nextRuns=history.filter(r=>r.mode==='coze');let changed=JSON.stringify(nextRuns)!==JSON.stringify(runs)||JSON.stringify(nextResults)!==JSON.stringify(real);real=nextResults;runs=nextRuns;loadReady();saveState='Supabase 已连接 · 正式批次 · 15秒检查更新';if(force||changed){topics();if(view!=='prompts'||force)render()}overrideNotice();scheduleNotice()}catch(e){saveState='连接失败：'+e.message;loadFailed(e.message);overrideNotice()}finally{loading=false}
+    if(loading)return;loading=true;refreshButton.disabled=true;
+    clearTimeout(refreshTimer);refreshTimer=null;
+    try{
+      const [history,daily]=await Promise.all([api('/api/runs'),api('/api/schedule')]);
+      schedule=daily;
+      const nextRuns=history.filter(r=>r.mode==='coze');
+      const historyChanged=JSON.stringify(nextRuns)!==JSON.stringify(runs);
+      if(!force&&!historyChanged&&!hasActiveRuns(history)){
+        saveState=connectedState();overrideNotice();scheduleNotice();return;
+      }
+      const results=await api('/api/results?mode='+source+'&summary=1');
+      const nextResults=ACEBatchPolicy.formalResults(results,history).filter(r=>r.simulation!==true&&r.model!=='DEMO'&&!String(r.id).startsWith('demo-')).map(currentBrandDictionary);
+      const changed=historyChanged||JSON.stringify(nextResults)!==JSON.stringify(real);
+      real=nextResults;runs=nextRuns;loadReady();saveState=connectedState();
+      if(force||changed){topics();if(view!=='prompts'||force)render()}
+      overrideNotice();scheduleNotice();
+    }catch(e){saveState='连接失败：'+e.message;loadFailed(e.message);overrideNotice()}
+    finally{loading=false;refreshButton.disabled=false;scheduleRefresh()}
   }
-  try{prompts=await api('/api/prompts');chosenPrompts=new Set(prompts.filter(p=>p.active&&p.language==='en').slice(0,3).map(p=>p.id));await refresh(true);const requested=location.hash.slice(1);view=requested==='song-generation'?'song-generation':config.can_edit&&['prompts','automation'].includes(requested)?requested:'overview';render();setInterval(()=>refresh(),15000)}catch(e){loadFailed(e.message)}
+  try{prompts=await api('/api/prompts');chosenPrompts=new Set(prompts.filter(p=>p.active&&p.language==='en').slice(0,3).map(p=>p.id));await refresh(true);const requested=location.hash.slice(1);view=requested==='song-generation'?'song-generation':config.can_edit&&['prompts','automation'].includes(requested)?requested:'overview';render()}catch(e){loadFailed(e.message)}
 })();
 
