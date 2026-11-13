@@ -27,7 +27,7 @@
       if(response.status===401){location.assign('/login');throw Error('登录已过期，请重新登录')}
       if(!response.ok)throw Error(data.error||'请求返回 HTTP '+response.status);
       return data;
-    }catch(e){if(e.name==='AbortError')throw Error('读取数据超时');throw e}
+    }catch(e){if(e.name==='AbortError'){const item=url.includes('/api/results')?'测试结果':url.includes('/api/prompts')?'题库':url.includes('/api/runs')?'批次记录':'服务配置';throw Error(item+'读取超时')}throw e}
     finally{clearTimeout(timer)}
   }
   const apiRoot=location.pathname.startsWith('/team/')?'/team':'';
@@ -142,6 +142,31 @@
   };
 
   function scheduleNotice(){const el=$('#dailyScheduleStatus');if(!el)return;if(schedule?.managed_by==='n8n'){el.textContent='已暂停定时测试，仍可查看历史结果或手动提交测试。';return;}el.textContent=schedule?`${schedule.enabled?'已启用':'未启用'} · 每 ${schedule.interval_days||7} 天 ${schedule.prompt_count} 题 / ${schedule.calls} 次调用 · ${schedule.blocked||('下一计划日期：'+schedule.next_date+' 09:00（当天到点未跑则待补跑）')} · 最近自动批次：${schedule.last?(schedule.last.day+' '+(statusText[schedule.last.status]||schedule.last.status)+' '+schedule.last.completed+'/'+schedule.last.total):'尚未执行'}`:'正在读取定期计划…'}
+  async function readResults(){
+    const path='/api/results?mode='+encodeURIComponent(source)+'&summary=1&page_size=200';
+    let page=await api(path);
+    // Keep compatibility if the frontend is served before the backend update.
+    if(Array.isArray(page))return page;
+    const version=page.version,total=page.total,items=[],ids=new Set();
+    if(typeof version!=='string'||!Number.isInteger(total)||total<0)throw Error('测试结果分页格式无效');
+    while(true){
+      if(page.version!==version||page.total!==total)throw Error('加载期间结果有更新，请重新连接');
+      if(!Array.isArray(page.items))throw Error('测试结果分页格式无效');
+      for(const row of page.items){
+        if(!row?.id||ids.has(row.id))throw Error('测试结果分页重复，请重新连接');
+        ids.add(row.id);items.push(row);
+      }
+      if(!initialLoaded){
+        $('#cloudLoadingTitle').textContent='正在读取云端测试数据…';
+        $('#cloudLoadingText').textContent=`正在分批读取测试结果：${items.length} / ${total} 条，请稍候。`;
+      }
+      if(page.next_offset===null)break;
+      if(!page.items.length||page.next_offset!==items.length||items.length>=total)throw Error('测试结果分页不完整，请重新连接');
+      page=await api(path+'&offset='+page.next_offset+'&version='+encodeURIComponent(version));
+    }
+    if(items.length!==total)throw Error('测试结果分页不完整，请重新连接');
+    return items;
+  }
   async function refresh(force=false){
     if(loading)return;loading=true;refreshButton.disabled=true;
     clearTimeout(refreshTimer);refreshTimer=null;
@@ -153,7 +178,7 @@
       if(!force&&!historyChanged&&!hasActiveRuns(history)){
         saveState=connectedState();overrideNotice();scheduleNotice();return;
       }
-      const results=await api('/api/results?mode='+source+'&summary=1');
+      const results=await readResults();
       const nextResults=ACEBatchPolicy.formalResults(results,history).filter(r=>r.simulation!==true&&r.model!=='DEMO'&&!String(r.id).startsWith('demo-')).map(currentBrandDictionary);
       const changed=historyChanged||JSON.stringify(nextResults)!==JSON.stringify(real);
       real=nextResults;runs=nextRuns;loadReady();saveState=connectedState();

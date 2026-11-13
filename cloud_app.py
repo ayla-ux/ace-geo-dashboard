@@ -1,5 +1,6 @@
 """Authenticated cloud entrypoint. No interactive input and no secrets in assets."""
 import hmac
+import hashlib
 import json
 import os
 import secrets
@@ -137,6 +138,20 @@ def create_app(settings=None, db=None, opener=None):
             row=next((r for r in snapshot['results'] if r['id']==request.args.get('id')),None)
             return (jsonify(row),200) if row else (jsonify(error='Not found'),404)
         if kind=='results' and request.args.get('mode','coze')!='coze':return jsonify([])
+        if kind=='results' and 'page_size' in request.args:
+            size=int(request.args['page_size']);offset=int(request.args.get('offset','0'))
+            if not 1<=size<=200 or offset<0:raise ValueError('Invalid result page')
+            # The version prevents mixing rows from different database snapshots.
+            if '_results_version' not in snapshot:
+                raw=json.dumps(snapshot['results'],sort_keys=True,ensure_ascii=False,separators=(',',':')).encode()
+                snapshot['_results_version']=hashlib.sha256(raw).hexdigest()
+            version=snapshot['_results_version']
+            expected=request.args.get('version')
+            if expected and expected!=version:
+                return jsonify(error='加载期间结果有更新，请重新连接以读取完整数据。'),409
+            rows=snapshot['results'];end=min(offset+size,len(rows))
+            return jsonify(items=rows[offset:end],total=len(rows),version=version,
+                next_offset=end if end<len(rows) else None)
         return jsonify(snapshot[kind])
 
     @app.post('/api/prompts')
