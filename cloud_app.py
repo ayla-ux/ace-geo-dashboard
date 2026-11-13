@@ -122,7 +122,12 @@ def create_app(settings=None, db=None, opener=None):
 
     @app.get('/api/schedule')
     def schedule():
-        return jsonify(enabled=False,managed_by='n8n',blocked='计划由 n8n Cloud 管理；本看板不验证启用状态或下次执行时间',interval_days=7,time='09:00',timezone='Asia/Shanghai')
+        # Fixed display requested by the user after confirming n8n is inactive.
+        # This does not query or control n8n. Update this label when resuming.
+        return jsonify(enabled=False, status='paused', managed_by='n8n',
+            blocked='已暂停定时测试，仍可查看历史结果或手动提交测试。',
+            confirmation_source='operator', confirmed_at='2026-11-13',
+            interval_days=None, time=None, timezone='Asia/Shanghai')
 
     @app.get('/api/<kind>')
     def read(kind):
